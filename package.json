@@ -1,0 +1,26 @@
+{
+  "name": "mern-passport-boilerplate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ScottMikul/mern-passport-boilerplate.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ScottMikul/mern-passport-boilerplate/issues"
+  },
+  "homepage": "https://github.com/ScottMikul/mern-passport-boilerplate#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.14",
+    "react-router-dom": "^5.2.0"
+  }
+}
