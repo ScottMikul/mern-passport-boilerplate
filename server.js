@@ -3,6 +3,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const passport = require("./passport/passport");
+const user = require("./models/user");
+const session = require("express-session");
 
 
 const app = express();
@@ -19,15 +22,61 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 
-// Connect to the Mongo DB
-//mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/passportBoilerplate");
 
-app.post("/api/login",(req,res)=>{
+// Connect to the Mongo DB
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/passportBoilerplate");
+
+app.use(session({ secret: "keyboard cat", resave: true, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.post("/api/login", passport.authenticate('local'),(req,res)=>{
+    if(!req.user){
+        res.json({msg:"incorrect email/password"});
+    }
+
 
 })
 
 app.post("/api/signup",(req,res)=>{
+    //password validation
+    const password = req.body.password;
+    const cpassword = req.body.cpassword;
+    if(cpassword!==password){
+        res.json({msg:"The passwords do not match!"});
+    }
 
+
+    if(req.body.username){
+        user.create({email:req.body.email,password:req.body.password,username:req.body.username},function (err, userResult) {
+            if (err) res.json({msg:"there was a problem with the email"});
+            // saved!
+            req.login(userResult, function(err){
+                if(err){console.log(err)}
+
+                res.json({msg:"Welcome "+ req.body.username})
+            })
+          })
+    }
+    else{
+        user.create({email:req.body.email,password:req.body.password},function (err, userResult) {
+            if (err) res.json({msg:"there was a problem with the email"});
+            // saved!
+            req.login(userResult, function(err){
+                if(err){console.log(err)}
+
+                res.json({msg:"Welcome "+ req.body.email})
+            })
+          })
+    }
+})
+app.get("/checklogin",(req,res)=>{
+    if(req.user){
+        res.send("logged in");
+    }
+    else{
+        res.send("not logged in");
+    }
 })
 
 app.get("/cookie",(req,res)=>{
